@@ -1,10 +1,10 @@
 package com.payflow.user.controller;
 
+import com.payflow.user.dto.UpdateProfileRequest;
 import com.payflow.user.dto.UserProfileResponse;
 import com.payflow.user.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -19,5 +19,12 @@ public class UserController {
     @GetMapping("/profile")
     public UserProfileResponse getProfile() {
         return userService.getProfile();
+    }
+
+    @PutMapping("/profile")
+    public UserProfileResponse updateProfile(
+            @Valid @RequestBody UpdateProfileRequest request) {
+
+        return userService.updateProfile(request);
     }
 }
