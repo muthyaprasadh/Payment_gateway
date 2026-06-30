@@ -5,6 +5,8 @@ import com.payflow.auth.dto.RegisterResponse;
 import com.payflow.auth.entity.Role;
 import com.payflow.auth.entity.User;
 import com.payflow.auth.repository.UserRepository;
+import com.payflow.exception.EmailAlreadyExistsException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
     public RegisterResponse register(RegisterRequest request) {
 
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new EmailAlreadyExistsException("Email already exists");
         }
 
         User user = User.builder()
