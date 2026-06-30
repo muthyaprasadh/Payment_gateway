@@ -1,11 +1,13 @@
 package com.payflow.auth.controller;
 
-import com.payflow.auth.dto.RegisterRequest;
-import com.payflow.auth.dto.RegisterResponse;
 import com.payflow.auth.dto.LoginRequest;
 import com.payflow.auth.dto.LoginResponse;
+import com.payflow.auth.dto.RegisterRequest;
+import com.payflow.auth.dto.RegisterResponse;
 import com.payflow.auth.service.AuthService;
+
 import jakarta.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
