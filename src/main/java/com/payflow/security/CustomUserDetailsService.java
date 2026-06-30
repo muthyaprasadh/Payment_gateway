@@ -2,7 +2,6 @@ package com.payflow.security;
 
 import com.payflow.auth.entity.User;
 import com.payflow.auth.repository.UserRepository;
-
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .password(user.getPassword())
                 .roles(user.getRole().name())
                 .build();
-
     }
 
 }
