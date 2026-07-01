@@ -1,5 +1,7 @@
 package com.payflow.user.controller;
 
+import com.payflow.user.dto.ChangePasswordRequest;
+import com.payflow.user.dto.MessageResponse;
 import com.payflow.user.dto.UpdateProfileRequest;
 import com.payflow.user.dto.UserProfileResponse;
 import com.payflow.user.service.UserService;
@@ -26,5 +28,12 @@ public class UserController {
             @Valid @RequestBody UpdateProfileRequest request) {
 
         return userService.updateProfile(request);
+    }
+
+    @PutMapping("/change-password")
+    public MessageResponse changePassword(
+            @Valid @RequestBody ChangePasswordRequest request) {
+
+        return userService.changePassword(request);
     }
 }
