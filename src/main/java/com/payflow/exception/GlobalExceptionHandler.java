@@ -37,6 +37,19 @@ public ResponseEntity<ApiError> handleInvalidCredentials(
 
     return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
 }
+@ExceptionHandler(InsufficientBalanceException.class)
+public ResponseEntity<ApiError> handleInsufficientBalance(
+        InsufficientBalanceException ex) {
+
+    ApiError error = new ApiError(
+            LocalDateTime.now(),
+            HttpStatus.BAD_REQUEST.value(),
+            HttpStatus.BAD_REQUEST.getReasonPhrase(),
+            ex.getMessage()
+    );
+
+    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+}
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(
