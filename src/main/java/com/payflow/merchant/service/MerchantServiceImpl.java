@@ -7,6 +7,8 @@ import com.payflow.merchant.dto.MerchantRegisterResponse;
 import com.payflow.merchant.entity.Merchant;
 import com.payflow.merchant.entity.MerchantStatus;
 import com.payflow.merchant.repository.MerchantRepository;
+import com.payflow.merchantwallet.entity.MerchantWallet;
+import com.payflow.merchantwallet.repository.MerchantWalletRepository;
 import com.payflow.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,15 +19,18 @@ import java.util.UUID;
 public class MerchantServiceImpl implements MerchantService {
 
     private final MerchantRepository merchantRepository;
+    private final MerchantWalletRepository merchantWalletRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     public MerchantServiceImpl(
             MerchantRepository merchantRepository,
+            MerchantWalletRepository merchantWalletRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService) {
 
         this.merchantRepository = merchantRepository;
+        this.merchantWalletRepository = merchantWalletRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -54,6 +59,13 @@ public class MerchantServiceImpl implements MerchantService {
                 .build();
 
         merchantRepository.save(merchant);
+
+        // Automatically create merchant wallet
+        MerchantWallet merchantWallet = MerchantWallet.builder()
+                .merchant(merchant)
+                .build();
+
+        merchantWalletRepository.save(merchantWallet);
 
         return MerchantRegisterResponse.builder()
                 .message("Merchant registered successfully")

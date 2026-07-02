@@ -4,10 +4,15 @@ import com.payflow.merchant.entity.Merchant;
 import com.payflow.merchant.repository.MerchantRepository;
 import com.payflow.order.dto.CreateOrderRequest;
 import com.payflow.order.dto.CreateOrderResponse;
+import com.payflow.order.dto.PayOrderRequest;
+import com.payflow.order.dto.PayOrderResponse;
 import com.payflow.order.entity.OrderStatus;
 import com.payflow.order.entity.PaymentOrder;
 import com.payflow.order.repository.PaymentOrderRepository;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -48,6 +53,23 @@ public class OrderServiceImpl implements OrderService {
                 .currency(order.getCurrency())
                 .receipt(order.getReceipt())
                 .status(order.getStatus().name())
+                .build();
+    }
+
+    @Override
+    public PayOrderResponse payOrder(
+            UUID orderId,
+            String customerEmail,
+            PayOrderRequest request) {
+
+        // Temporary implementation.
+        // We'll replace this with the complete payment flow next.
+
+        return PayOrderResponse.builder()
+                .message("Payment API coming next")
+                .orderStatus("CREATED")
+                .customerBalance(BigDecimal.ZERO)
+                .merchantBalance(BigDecimal.ZERO)
                 .build();
     }
 }
