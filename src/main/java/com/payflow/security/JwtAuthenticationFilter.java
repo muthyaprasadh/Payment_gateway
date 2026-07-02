@@ -1,5 +1,6 @@
 package com.payflow.security;
 
+import com.payflow.security.merchant.MerchantUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,13 +19,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final MerchantUserDetailsService merchantUserDetailsService;
 
     public JwtAuthenticationFilter(
             JwtService jwtService,
-            CustomUserDetailsService userDetailsService) {
+            CustomUserDetailsService userDetailsService,
+            MerchantUserDetailsService merchantUserDetailsService) {
 
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.merchantUserDetailsService = merchantUserDetailsService;
     }
 
     @Override
@@ -34,8 +38,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Skip JWT validation for authentication endpoints
-        if (request.getServletPath().startsWith("/api/auth")) {
+        String path = request.getServletPath();
+
+        // Skip authentication endpoints
+        if (path.startsWith("/api/auth")
+                || path.startsWith("/api/merchant/login")
+                || path.startsWith("/api/merchant/register")) {
+
             filterChain.doFilter(request, response);
             return;
         }
@@ -54,10 +63,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (email != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(email);
+            UserDetails userDetails = null;
 
-            if (jwtService.isTokenValid(token, userDetails)) {
+            // Try normal user
+            try {
+                userDetails = userDetailsService.loadUserByUsername(email);
+            } catch (Exception ignored) {
+            }
+
+            // If not a normal user, try merchant
+            if (userDetails == null) {
+                try {
+                    userDetails = merchantUserDetailsService.loadUserByUsername(email);
+                } catch (Exception ignored) {
+                }
+            }
+
+            if (userDetails != null &&
+                    jwtService.isTokenValid(token, userDetails)) {
 
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
@@ -69,8 +92,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource()
                                 .buildDetails(request));
 
-                SecurityContextHolder
-                        .getContext()
+                SecurityContextHolder.getContext()
                         .setAuthentication(authentication);
             }
         }

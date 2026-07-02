@@ -35,7 +35,9 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/api/auth/register",
-                                "/api/auth/login"
+                                "/api/auth/login",
+                                "/api/merchant/register",
+                                "/api/merchant/login"
                         ).permitAll()
 
                         .requestMatchers("/api/user/**")
@@ -49,6 +51,9 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/admin/**")
                         .hasRole("ADMIN")
+
+                        .requestMatchers("/api/orders/**")
+                        .authenticated()
 
                         .anyRequest()
                         .authenticated()
